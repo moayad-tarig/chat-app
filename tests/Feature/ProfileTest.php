@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 
+/** @covers \App\Http\Controllers\ProfileController */
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 
