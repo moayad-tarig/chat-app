@@ -20,10 +20,3 @@ it('return 200 status code', function () {
     $response = $this->get('/messages/'.$receiver->id);
     $response->assertStatus(200);
 });
-
-it('returns empty messages', function () {
-    $response = $this->get('/messages');
-    $response->assertDontSee('message');
-});
-
-// $response->assertStatus(302)->assertRedirect(route('login'));

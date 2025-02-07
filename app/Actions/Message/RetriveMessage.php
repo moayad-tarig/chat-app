@@ -15,7 +15,7 @@ final readonly class RetriveMessage
      */
     public function handle(int $sender_id, int $receiver_id): Collection
     {
-        return Message::query()->where(function (Builder $query) use ($sender_id, $receiver_id): void {
+        return Message::query()->with('sender:id,name', 'receiver:id,name')->where(function (Builder $query) use ($sender_id, $receiver_id): void {
             $query->where('sender_id', $sender_id)
                 ->where('receiver_id', $receiver_id);
         })->orWhere(function (Builder $query) use ($sender_id, $receiver_id): void {

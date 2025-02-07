@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Message\CreateMessage;
 use App\Actions\Message\RetriveMessage;
+use App\Events\MessageSentEvent;
+use App\Http\Requests\MessageRequest;
+use App\Models\Message;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +24,7 @@ final class MessageController extends Controller
         $sender_id = Auth::id();
         $messages = (new RetriveMessage())->handle($sender_id, $receiver_id);
 
-        return view('Message.index', ['messages' => $messages]);
+        return view('Message.index', ['messages' => $messages, 'receiver_id' => $receiver_id, 'sender_id' => $sender_id]);
     }
 
     /**
@@ -31,11 +36,19 @@ final class MessageController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * create a new message and redirect back
      */
-    public function store(Request $request): void
+    // public function store(MessageRequest $request): RedirectResponse
+    public function store(MessageRequest $request): RedirectResponse
     {
-        //
+        $message = (new CreateMessage())->handle(
+            Auth::id(),
+            $request->receiver_id,
+            $request->message
+        );
+        broadcast(new MessageSentEvent($message))->toOthers();
+
+        return redirect()->back();
     }
 
     /**
