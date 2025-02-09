@@ -16,9 +16,9 @@ final class Chat extends Component
     public User $receiver;
 
     /**
-     * @var array<int, Message>|null
+     * @var Collection<int, Message>|null
      */
-    public ?array $messages = null;
+    public ?Collection $messages = null;
 
     public ?string $message = '';
 
@@ -36,7 +36,7 @@ final class Chat extends Component
         $this->receiver = User::find($receiver_id);
         $this->senderId = $sender_id;
         $this->receiverId = $receiver_id;
-        $this->messages[] = $messages;
+        $this->messages = $messages;
     }
 
     public function sendMessage(): void
@@ -44,9 +44,7 @@ final class Chat extends Component
         $sentMessage = $this->saveMessage();
         $this->messages[] = $sentMessage;
         $this->message = null;
-        // dd($this->message);
         broadcast(new MessageSentEvent($sentMessage))->toOthers();
-
     }
 
     /**

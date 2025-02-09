@@ -23,7 +23,6 @@ final class MessageController extends Controller
     {
         $sender_id = Auth::id();
         $messages = (new RetriveMessage())->handle($sender_id, $receiver_id);
-
         return view('Message.index', ['messages' => $messages, 'receiver_id' => $receiver_id, 'sender_id' => $sender_id]);
     }
 
