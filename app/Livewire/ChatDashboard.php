@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\View\View;
 use Livewire\Component;
 
 final class ChatDashboard extends Component
 {
-    public $users;
+    /**
+     * @var Collection<int , User>|null
+     */
+    public ?Collection $users = null;
 
     public function mount(): void
     {
@@ -17,7 +22,10 @@ final class ChatDashboard extends Component
 
     }
 
-    public function render()
+    /**
+     * Render the component.
+     */
+    public function render(): View
     {
         return view('livewire.chat-dashboard');
     }

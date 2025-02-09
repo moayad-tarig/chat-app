@@ -7,28 +7,36 @@ namespace App\Livewire;
 use App\Events\MessageSentEvent;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 final class Chat extends Component
 {
-    public $receiver;
+    public User $receiver;
 
-    public $messages = [];
+    /**
+     * @var array<int, Message>|null
+     */
+    public ?array $messages = null;
 
-    public $message = '';
+    public ?string $message = '';
 
-    public $receiverId;
+    public int $receiverId;
 
-    public $senderId;
+    public int $senderId;
 
-    public function mount($receiver_id, $messages, $sender_id): void
+    /**
+     * Mount the component with the receiver, messages, and sender id.
+     *
+     * @param  Collection<int , Message>  $messages
+     */
+    public function mount(int $receiver_id, Collection $messages, int $sender_id): void
     {
-        // dd($messages);
         $this->receiver = User::find($receiver_id);
         $this->senderId = $sender_id;
         $this->receiverId = $receiver_id;
-        $this->messages = $messages;
+        $this->messages[] = $messages;
     }
 
     public function sendMessage(): void
@@ -41,16 +49,19 @@ final class Chat extends Component
 
     }
 
+    /**
+     * Listen to the message sent event.
+     *
+     * @param  array{message: array{id : int}}  $event
+     */
     #[On('echo-private:chat-channel.{senderId},MessageSentEvent')]
     public function listenMessage(array $event): void
     {
-        // Convert the event message array into an Eloquent model with relationships
         $newMessage = Message::find($event['message']['id'])->load('sender:id,name', 'receiver:id,name');
-
         $this->messages[] = $newMessage;
     }
 
-    public function saveMessage()
+    public function saveMessage(): Message
     {
         return Message::create([
             'sender_id' => $this->senderId,
@@ -60,6 +71,11 @@ final class Chat extends Component
 
     }
 
+    /**
+     * Render the component.
+     *
+     * @return \Illuminate\View\View
+     */
     public function render()
     {
         return view('livewire.chat');
