@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 final class ChatDashboardController extends Controller
 {
@@ -14,7 +16,12 @@ final class ChatDashboardController extends Controller
      */
     public function index(): View
     {
-        return view('dashboard');
+        $users = User::whereNot('id', Auth::user()->id)->withCount(['unreadMessages' => function ($query): void {
+            $query->where('receiver_id', Auth::user()->id);
+            $query->where('is_read', false);
+        }])->get();
+
+        return view('dashboard', ['users' => $users]);
     }
 
     /**
