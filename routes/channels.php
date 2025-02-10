@@ -16,3 +16,6 @@ Broadcast::channel('chat-channel.{reciverId}', function (User $user, $reciverId)
 Broadcast::channel('unread-message-channel.{reciverId}', function (User $user, $reciverId) {
     return (int) $user->id === (int) $reciverId;
 });
+Broadcast::channel('typing-channel.{senderId}', function (User $user, $senderId) {
+    return (int) $user->id === (int) $senderId;
+});

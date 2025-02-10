@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Events\ChatTypingEvent;
 use App\Events\MessageSentEvent;
 use App\Events\UnreadMessageEvent;
 use App\Livewire\Action\Message\MarkAsReadAction;
@@ -27,6 +28,8 @@ final class Chat extends Component
     public int $receiverId;
 
     public int $senderId;
+
+    public bool $isTyping = false;
 
     private ?MarkAsReadAction $markAsReadAction = null;
 
@@ -64,6 +67,11 @@ final class Chat extends Component
             'receiver_id' => $this->receiverId,
             'message' => $this->message,
         ]);
+    }
+
+    public function userTyping(): void
+    {
+        broadcast(new ChatTypingEvent($this->receiverId))->toOthers();
     }
 
     public function sendMessage(): void
