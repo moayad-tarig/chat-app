@@ -72,5 +72,25 @@
             </form>
         </div>
     </div>
+
+ 
     
 </div>
+
+@script
+<script>
+    const container = document.getElementById('chat-container');
+            // Scroll on initial load
+            window.onload = () => {
+         scrollToBottom();
+     };
+       // Listen for Livewire events
+     function scrollToBottom() {
+         if (container) {
+             container.scrollTo(0, container.scrollHeight);
+         }
+     }
+
+ </script>
+
+@endscript
